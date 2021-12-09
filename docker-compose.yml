@@ -1,0 +1,62 @@
+version: '3.1'
+
+services:
+  maria:
+    image: mariadb:latest
+    container_name: "mariadb"
+    restart: always
+    ports:
+      - "63306:3306"
+    volumes: 
+      - ~/docker/mariadb/etc/mysql/conf.d:/etc/mysql/conf.d:ro 
+      - ~/docker/mariadb/var/lib/mysql:/var/lib/mysql 
+      - ~/docker/mariadb/var/log/maria:/var/log/maria 
+    environment: 
+      - MYSQL_ROOT_PASSWORD=???
+      - TZ="Asia/Seoul"
+
+  nginx:
+    depends_on:
+      - api
+      - ui
+    restart: always
+    build:
+      dockerfile: Dockerfile
+      context: ./nginx
+    ports:
+      - "3050:80"
+
+  api:
+    build:
+      dockerfile: Dockerfile
+      context: "./api"
+    depends_on:
+      - mariadb
+    volumes:
+      - /app/node_modules
+      - ./api:/app
+    environment:
+      MYSQL_HOST_IP: mariadb
+
+  client:
+    stdin_open: true
+    environment:
+      - CHOKIDAR_USEPOLLING=true
+    build:
+      dockerfile: Dockerfile
+      context: ./ui
+    volumes:
+      - /app/node_modules
+      - ./ui:/app
+
+
+
+  # adminer:
+  #     image: adminer:latest
+  #     restart: unless-stopped
+  #     ports:
+  #       - 8040:8080
+  #     depends_on:
+  #       - maria
+  #     environment:
+  #       ADMINER_DEFAULT_SERVER: mariadb
