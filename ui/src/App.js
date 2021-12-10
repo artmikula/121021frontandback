@@ -1,4 +1,3 @@
-import React, { Component } from "react";
 import { useState, useEffect } from "react";
 import LoginForm from "./components/LoginForm";
 import FarmlandDataEntry from "./components/FarmlandDataEntry";
@@ -20,6 +19,7 @@ function App() {
   const [username, setUsername] = useState(null);
   const [email, setEmail] = useState(null);
   const [fetchData, setFetchData] = useState([]);
+  const response = null;
 
   const [apiData, setApiData] = useState({
     ground_temperature_min: "",
@@ -55,11 +55,15 @@ function App() {
   };
 
   async function loadUsers() {
-    const res = await axios.get("/api/get");
-    setUsers({
-      users: res.data,
-    });
-    console.log(res.data);
+    let call = "/api/users";
+    const data = await fetch(call)
+      .then((res) => res.json())
+      .then((result) => {
+        setFetchData(result);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   }
 
   // useEffect(() => {
@@ -108,10 +112,9 @@ function App() {
     console.log(apiData);
   }, [apiData]);
 
-  const submit = () => {
-    axios.post("/api/insert", "test").then(() => {
-      console.log("success post");
-    });
+  const checkUsername = (username) => {
+    axios.get(`api/users/${username}`);
+    console.log("User name check done");
   };
 
   const Signup = (newUserData) => {
@@ -120,29 +123,13 @@ function App() {
       newUserData.password &&
       newUserData.password === newUserData.passwordConfirm
     ) {
-      alert("New user successfully created");
+      checkUsername();
       setSignupPage("");
       setError("");
     } else {
       setError("Please try again");
     }
   };
-
-  // async function SubmitFarmData(farmData) {
-  //   let cityname =
-  //     "https://api.openweathermap.org/data/2.5/weather?q=" +
-  //     searchValues.city +
-  //     "&appid=3a6db61ccae0f26e0883affe7aaa929e";
-  //   const data = await fetch(cityname)
-  //     .then((res) => res.json())
-  //     .then((result) => {
-  //       setError(null);
-  //       setApiData(result);
-  //     })
-  //     .catch((error) => {
-  //       setError(error);
-  //     });
-  // }
 
   const Logout = () => {
     setUser({ name: "", email: "" });
@@ -151,9 +138,10 @@ function App() {
   return (
     <div className="App">
       <div>
-        <h1>users</h1>
         <div>
-          <button onClick={() => submit()}>Create User</button>
+          <button onClick={() => checkUsername("arthur")}>
+            Check Username
+          </button>
         </div>
       </div>
       {user.name && dataLoaded == null && signupPage === null && (

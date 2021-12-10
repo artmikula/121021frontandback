@@ -13,6 +13,11 @@ function SignupPage({ Signup, error, setSignupPage }) {
     Signup(newUserData);
   };
 
+  const cancel = (e) => {
+    e.preventDefault();
+    setSignupPage(null);
+  };
+
   return (
     <div className="container">
       <form id="loginform" autoComplete="off" onSubmit={signupHandler}>
@@ -57,7 +62,10 @@ function SignupPage({ Signup, error, setSignupPage }) {
               value={newUserData.passwordConfirm}
             />
           </div>
-          <input type="submit" value="Signup" />
+          <div className="buttons">
+            <input type="submit" value="SIGNUP" />
+            <input type="submit" value="CANCEL" onClick={(e) => cancel(e)} />
+          </div>
         </div>
       </form>
     </div>

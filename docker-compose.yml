@@ -1,18 +1,21 @@
-version: '3.1'
+version: '3.9'
 
 services:
+
   maria:
     image: mariadb:latest
-    container_name: "mariadb"
     restart: always
+    container_name: mariadb
     ports:
-      - "63306:3306"
-    volumes: 
-      - ~/docker/mariadb/etc/mysql/conf.d:/etc/mysql/conf.d:ro 
-      - ~/docker/mariadb/var/lib/mysql:/var/lib/mysql 
-      - ~/docker/mariadb/var/log/maria:/var/log/maria 
-    environment: 
-      - MYSQL_ROOT_PASSWORD=???
+      - 63306:3306
+    volumes:
+      - ~/apps/mysql:/var/lib/mysql
+      - "./setup.sql:/docker-entrypoint-initdb.d/setup.sql"
+    environment:
+      - MYSQL_PASSWORD=ROOT
+      - MYSQL_USER=my_user
+      - MYSQL_DATABASE=my_database3
+      - MYSQL_ROOT_PASSWORD=pwds
       - TZ="Asia/Seoul"
 
   nginx:
@@ -48,15 +51,3 @@ services:
     volumes:
       - /app/node_modules
       - ./ui:/app
-
-
-
-  # adminer:
-  #     image: adminer:latest
-  #     restart: unless-stopped
-  #     ports:
-  #       - 8040:8080
-  #     depends_on:
-  #       - maria
-  #     environment:
-  #       ADMINER_DEFAULT_SERVER: mariadb
