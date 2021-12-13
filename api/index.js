@@ -13,27 +13,13 @@ app.get("/", (req, res) => {
   res.send("Testing... success");
 });
 
-app.get("/get", (req, res) => {
-  const SelectQuery = " SELECT * FROM users";
-  db.query(SelectQuery, (err, result) => {
-    res.send(result);
-  });
-});
-
-// app.get("/get/:username", (req, res) => {
-//   const username = req.params.username;
-//   const SelectQuery = "SELECT FROM users WHERE id = ?";
-//   conn.query(SelectQuery, username, (err, result) => {
-//     if (err) console.log(err);
-//   });
-// });
-
-app.get("/users", async (req, res) => {
+app.get("/users/:username", async (req, res) => {
   let conn;
+  const userID = req.params.username;
   try {
     conn = await pool.getConnection();
-    var query = "select * from users";
-    var rows = await conn.query(query);
+    let query = `select * from users WHERE username="${userID}"`;
+    let rows = await conn.query(query);
     res.send(rows);
   } catch (err) {
     throw err;
@@ -42,13 +28,13 @@ app.get("/users", async (req, res) => {
   }
 });
 
-app.get("/get/users/:id", async (req, res) => {
+app.get("/verify/:username", async (req, res) => {
   let conn;
-  const id = req.params.username;
+  const userID = req.params.username;
   try {
     conn = await pool.getConnection();
-    var query = "SELECT FROM users WHERE id = ?";
-    var rows = await conn.query(query);
+    let query = `SELECT password FROM users WHERE username="${userID}"`;
+    let rows = await conn.query(query);
     res.send(rows);
   } catch (err) {
     throw err;

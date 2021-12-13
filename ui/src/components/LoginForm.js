@@ -41,8 +41,8 @@ function LoginForm({ Login, error, setSignupPage }) {
             />
           </div>
           <div className="buttons">
-            <input type="submit" value="LOGIN" />
-            <input type="submit" value="SIGNUP" onClick={signup} />
+            <input type="submit" value="로그인" />
+            <input type="submit" value="가입하기" onClick={signup} />
           </div>
         </div>
       </form>

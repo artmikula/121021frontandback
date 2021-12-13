@@ -19,6 +19,8 @@ button {
   align-items: center;
   justify-content: center;
   background-color: #d3d3d3;
+  /* min-width: 800px; */
+  flex-direction: column;
 }
 
 #loginform {
@@ -133,7 +135,7 @@ button {
 }
 
 .enterdata {
-  width: 50vw;
+  width: 75vw;
   background-color: #fff;
   outline: 2px solid #09557d;
   padding: 5%;
@@ -167,11 +169,13 @@ textarea {
 }
 
 .container {
+  position: relative;
   display: flex;
   justify-content: center;
   align-items: center;
   flex-direction: column;
   margin: auto;
+  max-width: 60vw;
 }
 
 .col-25 {
@@ -257,7 +261,7 @@ textarea {
 
 #farm-data-form {
   display: flex;
-  align-items: center;
+  /* align-items: center; */
   flex-direction: column;
   float: right;
 }

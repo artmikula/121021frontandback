@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import results from "../styles/results.css";
 import CustomMap from "./CustomMap";
 
-function Results({ apiData, setApiData, dataLoaded, setDataLoaded }) {
+function Results({ dataLoaded, setDataLoaded }) {
   const [data, setData] = useState("");
 
   const sendData = (e) => {
@@ -17,16 +17,16 @@ function Results({ apiData, setApiData, dataLoaded, setDataLoaded }) {
   return (
     <div className="results">
       <div className="recommendations">
-        <div className="title">Recommended Crops</div>
+        <div className="title">입력한 데이터에 적합한 농작물 추천</div>
         <div className="recommend-inner">
           <div className="recommend">
-            <p>Crop Recommendations :</p>
-            <h2>Strawberry</h2>
+            <p>농작물 추천</p>
+            <h2>추천딸기</h2>
             <br />
-            <p>Suitable Conditions :</p>
-            <h3>Temperature : 20-30 C</h3>
-            <h3>Air volume : 100 </h3>
-            <h3>Terrain rigidity : 50 </h3>
+            <p>적합한 환경기온</p>
+            <h3>기온 : 2–29 °C</h3>
+            <h3>풍량 : 0~10</h3>
+            <h3>지형험준도: 5.5~6.5</h3>
             <br />
             <label htmlFor="text-input">Input</label>
             <br />
@@ -46,7 +46,7 @@ function Results({ apiData, setApiData, dataLoaded, setDataLoaded }) {
         </div>
       </div>
       <div className="recommendations_map">
-        <div className="title">Recommended climate zones</div>
+        <div className="title">입력 데이터와 유사한 기후대 추천</div>
         <div className="map">
           <CustomMap />
         </div>

@@ -6,115 +6,64 @@ import Results from "./components/Results";
 import axios from "axios";
 
 function App() {
-  const adminUser = {
-    name: "admin",
-    password: "admin123",
-  };
+  // const adminUser = {
+  //   name: "admin",
+  //   password: "admin123",
+  // };
 
-  const [user, setUser] = useState({ name: "test" });
+  const [user, setUser] = useState({ name: null });
   const [error, setError] = useState("");
   const [signupPage, setSignupPage] = useState(null);
   const [dataLoaded, setDataLoaded] = useState(null);
-  const [users, setUsers] = useState({});
-  const [username, setUsername] = useState(null);
-  const [email, setEmail] = useState(null);
+  // const [username, setUsername] = useState(null);
+  // const [email, setEmail] = useState(null);
   const [fetchData, setFetchData] = useState([]);
-  const response = null;
+  let userExists = false;
+  let pwd = null;
 
-  const [apiData, setApiData] = useState({
-    ground_temperature_min: "",
-    ground_temperature_max: "",
-    sunshine_min: "",
-    sunshine_max: "",
-    athmospheric_pressure_min: "",
-    athmospheric_pressure_max: "",
-    wind_min: "",
-    wind_max: "",
-    terrain_roughness_min: "",
-    terrain_roughness_max: "",
-    ilsa_min: "",
-    ilsa_max: "",
-    humidity_min: "",
-    humidity_max: "",
-    precipiation_min: "",
-    precipiation_max: "",
-    air_temperature_min: "10",
-    air_temperature_max: "",
-  });
-
-  const farmDataItems = {
-    air_temperature: "Air Temperature (°C)",
-    ground_temperature: "Ground Temperature (°C)",
-    sunshine: "Sunshine (%)",
-    athmospheric_pressure: "Athmospheric Pressure",
-    wind: "Wind speed (km/h)",
-    terrain_roughness: "Terrain roughness",
-    ilsa: "Ilsa",
-    humidity: "Humidity (%)",
-    precipiation: "Precipitation (%)",
-  };
-
-  async function loadUsers() {
-    let call = "/api/users";
-    const data = await fetch(call)
+  async function checkUserExists(username) {
+    let query = `/api/users/${username}`;
+    const data = await fetch(query)
       .then((res) => res.json())
       .then((result) => {
-        setFetchData(result);
-      })
-      .catch((error) => {
-        console.log(error);
+        userExists = result;
+      });
+    if (userExists.length > 0) {
+      console.log(userExists);
+      setError("Username not available");
+      console.log("Not available");
+      setSignupPage(true);
+    } else {
+      // addUser();
+      setSignupPage(null);
+      setError(null);
+    }
+  }
+
+  async function verifyCredentials(details) {
+    let query = `/api/users/${details.name}`;
+    const data = await fetch(query)
+      .then((res) => res.json())
+      .then((result) => {
+        pwd = result[0].password;
       });
   }
 
-  // useEffect(() => {
-  //   loadUsers();
-  // }, [users]);
-
-  const Login = (details) => {
-    if (
-      details.name === adminUser.name &&
-      details.password === adminUser.password
-    ) {
+  async function Login(details) {
+    await verifyCredentials(details);
+    if (details.password === pwd) {
       setUser({
         name: details.name,
       });
-      setError("");
+      setError(null);
     } else {
       setError("Please try again!");
     }
-  };
+  }
 
   const SubmitFarmData = (farmData) => {
-    setApiData({
-      ground_temperature_min: farmData.ground_temperature_min,
-      ground_temperature_max: farmData.ground_temperature_max,
-      sunshine_min: farmData.sunshine_min,
-      sunshine_max: farmData.sunshine_max,
-      athmospheric_pressure_min: farmData.athmospheric_pressure_min,
-      athmospheric_pressure_max: farmData.athmospheric_pressure_max,
-      wind_min: farmData.wind_min,
-      wind_max: farmData.wind_max,
-      terrain_roughness_min: farmData.terrain_roughness_min,
-      terrain_roughness_max: farmData.terrain_roughness_max,
-      ilsa_min: farmData.ilsa_min,
-      ilsa_max: farmData.ilsa_max,
-      humidity_min: farmData.humidity_min,
-      humidity_max: farmData.humidity_max,
-      precipiation_min: farmData.precipiation_min,
-      precipiation_max: farmData.precipiation_max,
-      air_temperature_min: farmData.air_temperature_min,
-      air_temperature_max: farmData.air_temperature_max,
-    });
+    console.log(farmData);
     setDataLoaded("complete");
-  };
-
-  useEffect(() => {
-    console.log(apiData);
-  }, [apiData]);
-
-  const checkUsername = (username) => {
-    axios.get(`api/users/${username}`);
-    console.log("User name check done");
   };
 
   const Signup = (newUserData) => {
@@ -123,46 +72,32 @@ function App() {
       newUserData.password &&
       newUserData.password === newUserData.passwordConfirm
     ) {
-      checkUsername();
-      setSignupPage("");
-      setError("");
+      checkUserExists(newUserData.name);
     } else {
-      setError("Please try again");
+      setError("Try again");
     }
   };
 
   const Logout = () => {
-    setUser({ name: "", email: "" });
+    setUser({ name: null, email: null });
   };
 
   return (
     <div className="App">
-      <div>
-        <div>
-          <button onClick={() => checkUsername("arthur")}>
-            Check Username
-          </button>
-        </div>
-      </div>
       {user.name && dataLoaded == null && signupPage === null && (
         <div id="mainCont">
           <div className="welcome">
             <h2>
-              Welcome, <span>{user.name}</span>
+              안녕하세요, <span>{user.name}</span>
             </h2>
-            <button onClick={Logout}>Logout</button>
+            <button onClick={Logout}>로그오프</button>
           </div>
           <div className="enterdata">
-            <FarmlandDataEntry
-              SubmitFarmData={SubmitFarmData}
-              error={error}
-              setApi={setApiData}
-              farmDataItems={farmDataItems}
-            />
+            <FarmlandDataEntry SubmitFarmData={SubmitFarmData} error={error} />
           </div>
         </div>
       )}
-      {user.name === "" && dataLoaded === null && signupPage === null && (
+      {user.name === null && dataLoaded === null && signupPage === null && (
         <LoginForm Login={Login} error={error} setSignupPage={setSignupPage} />
       )}
       {signupPage && (
@@ -173,12 +108,7 @@ function App() {
         />
       )}
       {dataLoaded && (
-        <Results
-          apiData={apiData}
-          setApiData={setApiData}
-          dataLoaded={dataLoaded}
-          setDataLoaded={setDataLoaded}
-        />
+        <Results dataLoaded={dataLoaded} setDataLoaded={setDataLoaded} />
       )}
     </div>
   );
