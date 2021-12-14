@@ -1,16 +1,16 @@
 import React from "react";
 import { useState } from "react";
 
-function SignupPage({ Signup, error, setSignupPage }) {
-  const [newUserData, setNewUserData] = useState({
-    name: "",
-    password: "",
-    passwordConfirm: "",
-  });
-
+function SignupPage({
+  Signup,
+  error,
+  setSignupPage,
+  newUserData,
+  setNewUserData,
+}) {
   const signupHandler = (e) => {
     e.preventDefault();
-    Signup(newUserData);
+    Signup();
   };
 
   const cancel = (e) => {
@@ -48,7 +48,7 @@ function SignupPage({ Signup, error, setSignupPage }) {
             />
           </div>
           <div className="form-group">
-            <label htmlFor="passwordConfirm">Confirm Password : </label>
+            <label htmlFor="passwordConfirm">Confirm Password</label>
             <input
               type="password"
               name="passwordConfirm"

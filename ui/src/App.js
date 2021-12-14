@@ -15,11 +15,15 @@ function App() {
   const [error, setError] = useState("");
   const [signupPage, setSignupPage] = useState(null);
   const [dataLoaded, setDataLoaded] = useState(null);
-  // const [username, setUsername] = useState(null);
-  // const [email, setEmail] = useState(null);
   const [fetchData, setFetchData] = useState([]);
   let userExists = false;
   let pwd = null;
+
+  const [newUserData, setNewUserData] = useState({
+    name: "",
+    password: "",
+    passwordConfirm: "",
+  });
 
   async function checkUserExists(username) {
     let query = `/api/users/${username}`;
@@ -29,25 +33,41 @@ function App() {
         userExists = result;
       });
     if (userExists.length > 0) {
-      console.log(userExists);
       setError("Username not available");
-      console.log("Not available");
       setSignupPage(true);
     } else {
-      // addUser();
+      addUser();
+      setSignupPage(null);
+      setError(null);
+    }
+  }
+
+  async function checkUserExists(username) {
+    await axios.get(`/api/users/${username}`).then((response) => {
+      userExists = response;
+    });
+    if (userExists.length > 0) {
+      setError("Username not available");
+      setSignupPage(true);
+    } else {
+      addUser();
       setSignupPage(null);
       setError(null);
     }
   }
 
   async function verifyCredentials(details) {
-    let query = `/api/users/${details.name}`;
-    const data = await fetch(query)
-      .then((res) => res.json())
-      .then((result) => {
-        pwd = result[0].password;
-      });
+    await axios.get(`/api/users/${details.name}`).then((response) => {
+      pwd = response.data[0].password;
+    });
   }
+
+  const addUser = () => {
+    console.log("Adding user...");
+    axios.post("/api/adduser", newUserData).then((response) => {
+      console.log(response);
+    });
+  };
 
   async function Login(details) {
     await verifyCredentials(details);
@@ -66,7 +86,7 @@ function App() {
     setDataLoaded("complete");
   };
 
-  const Signup = (newUserData) => {
+  const Signup = () => {
     if (
       newUserData.name &&
       newUserData.password &&
@@ -105,6 +125,8 @@ function App() {
           Signup={Signup}
           error={error}
           setSignupPage={setSignupPage}
+          newUserData={newUserData}
+          setNewUserData={setNewUserData}
         />
       )}
       {dataLoaded && (
